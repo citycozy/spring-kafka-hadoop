@@ -34,5 +34,52 @@
         };
     }
 </script>
+
+<h1>Kafka Consumer</h1>
+
+<table id="messageTable">
+    <thead>
+    <tr>
+        <th>Message</th>
+    </tr>
+    </thead>
+    <tbody></tbody>
+</table>
+
+<script>
+    function getMessages() {
+        var xhr = new XMLHttpRequest();
+        xhr.open("GET", "http://localhost:8080/get-messages", true);
+        xhr.setRequestHeader("Content-Type", "application/json");
+        xhr.send();
+
+        xhr.onload = function () {
+            if (xhr.status === 200) {
+                updateTable(JSON.parse(xhr.responseText));
+            } else {
+                console.error("Failed to get messages");
+            }
+
+            // 다음 호출을 예약
+            setTimeout(getMessages, 1000); // 1초마다 호출하도록 설정 (원하는 주기로 조정)
+        };
+    }
+
+    function updateTable(messages) {
+        var tbody = document.querySelector("#messageTable tbody");
+        tbody.innerHTML = ""; // 테이블 내용 초기화
+
+        messages.forEach(function (message) {
+            var row = tbody.insertRow(0);
+            var cell = row.insertCell(0);
+            cell.textContent = message;
+        });
+    }
+
+    // 페이지 로드 후 초기 호출
+    window.onload = function () {
+        getMessages();
+    };
+</script>
 </body>
 </html>
